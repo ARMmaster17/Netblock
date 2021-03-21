@@ -16,7 +16,6 @@ GLFWwindow* window;
 
 // Include GLM
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
 #include "shaderhelpers.h"
@@ -24,6 +23,7 @@ using namespace glm;
 #include "texturehelpers.h"
 #include "modelhelpers.h"
 #include "vbo.h"
+#include "world.h"
 
 int main()
 {
@@ -117,16 +117,16 @@ int main()
 
 	// For speed computation
 	double lastTime = glfwGetTime();
-	int nbFrames = 0;
+	double currentTime = 0;
 
 	do {
 		// Measure speed
-		double currentTime = glfwGetTime();
-		nbFrames++;
+		double previousTime = currentTime;
+		currentTime = glfwGetTime();
 		if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1sec ago
 			// printf and reset
-			//printf("%f ms/frame\n", 1000.0 / double(nbFrames));
-			nbFrames = 0;
+			double timeDiff = currentTime - previousTime;
+			printf("%f FPS\n", 1.0 / double(timeDiff));
 			lastTime += 1.0;
 		}
 
@@ -144,102 +144,7 @@ int main()
 		glUseProgram(programID);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This and ProgramID can be lifted if all objects use the same shader.
 
-		///////// Single object render //////////
-
-		// Model translation matrix.
-		glm::mat4 ModelMatrix1 = glm::mat4(1.0);
-		glm::mat4 MVP1 = ProjectionMatrix * ViewMatrix * ModelMatrix1;
-
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix1[0][0]);
-
-		// Bind our texture in Texture Unit 0
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture);
-		// Set our "myTextureSampler" sampler to use Texture Unit 0
-		glUniform1i(TextureID, 0);
-
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 2nd attribute buffer : UVs
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-		glVertexAttribPointer(
-			1,                                // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// 3rd attribute buffer : normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-		glVertexAttribPointer(
-			2,                                // attribute
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-		// Draw the triangles !
-		glDrawElements(
-			GL_TRIANGLES,      // mode
-			indices.size(),    // count
-			GL_UNSIGNED_SHORT,   // type
-			(void*)0           // element array buffer offset
-		);
-		////////////// End first object rendering ///////////////
-
-		//// Bind our texture in Texture Unit 0 (if changing textures)
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, Texture);
-		//// Set our "myTextureSampler" sampler to use Texture Unit 0
-		//glUniform1i(TextureID, 0);
-		glm::mat4 ModelMatrix2 = glm::mat4(1.0);
-		ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(2.0f, 0.0f, 0.0f));
-		glm::mat4 MVP2 = ProjectionMatrix * ViewMatrix * ModelMatrix2;
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP2[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix2[0][0]);
-
-		// Everything beyond this point is the same.
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-		// 2nd attribute buffer : UVs
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-		// 3rd attribute buffer : normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-		// Draw the triangles !
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
-
-		//////////////////////////// End object rendering ///////////////////
+		DrawWorld(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, vertexbuffer, uvbuffer, normalbuffer, elementbuffer, indices);
 		
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

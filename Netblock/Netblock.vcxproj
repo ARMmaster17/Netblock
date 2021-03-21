@@ -141,18 +141,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="controls.cpp" />
+    <ClCompile Include="dynamicarray.cpp" />
+    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="modelhelpers.cpp" />
     <ClCompile Include="Netblock.cpp" />
     <ClCompile Include="shaderhelpers.cpp" />
     <ClCompile Include="texturehelpers.cpp" />
     <ClCompile Include="vbo.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controls.h" />
+    <ClInclude Include="dynamicarray.h" />
+    <ClInclude Include="graphics.h" />
     <ClInclude Include="modelhelpers.h" />
     <ClInclude Include="shaderhelpers.h" />
     <ClInclude Include="texturehelpers.h" />
     <ClInclude Include="vbo.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleFragmentShader.fragmentshader" />
