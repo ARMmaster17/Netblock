@@ -24,6 +24,8 @@ using namespace glm;
 #include "modelhelpers.h"
 #include "vbo.h"
 #include "graphics.h"
+#include "block.h"
+
 #include "world.h"
 
 int main()
@@ -80,14 +82,15 @@ int main()
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
 
 	// Load the texture
-	GLuint Texture = loadDDS("grass.dds");
+	GLuint DirtTexture = loadDDS("dirt.dds");
+	GLuint GrassTexture = loadDDS("grass.dds");
 	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
 
 	// Read our .obj file
 	std::vector< glm::vec3 > vertices;
 	std::vector< glm::vec2 > uvs;
 	std::vector< glm::vec3 > normals; // Won't be used at the moment.
-	bool res = loadOBJ("cube.obj", vertices, uvs, normals);
+	bool res = loadOBJ("cubeface.obj", vertices, uvs, normals);
 
 	graphics::BufferCollection bc;
 
@@ -154,7 +157,8 @@ int main()
 	glDeleteBuffers(1, &bc.vertexbuffer);
 	glDeleteBuffers(1, &bc.uvbuffer);
 	glDeleteProgram(programID);
-	glDeleteTextures(1, &Texture);
+	glDeleteTextures(1, &DirtTexture);
+	glDeleteTextures(1, &GrassTexture);
 	glDeleteVertexArrays(1, &VertexArrayID);
 
 	// Close OpenGL window and terminate GLFW

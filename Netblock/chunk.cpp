@@ -7,6 +7,7 @@
 
 #include "graphics.h"
 //#include "dynamicarray.h"
+#include "block.h"
 #include "chunk.h"
 
 namespace chunk
@@ -81,7 +82,9 @@ namespace chunk
 					}
 				}
 		}
-		chunkData[5][7][5] = BLOCK_DIRT;
+		
+		// TODO: Should probably move this.
+		block::InitRotations();
 	}
 
 	bool BlockIsExposeed(int x, int y, int z)
@@ -116,14 +119,54 @@ namespace chunk
 		return false;
 	}
 
-	void DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+	void DrawBlock(int type, int x, int y, int z, glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
 	{
 		//// Bind our texture in Texture Unit 0 (if changing textures)
 		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, Texture);
+		//glBindTexture(GL_TEXTURE_2D, 2);
 		//// Set our "myTextureSampler" sampler to use Texture Unit 0
-		//glUniform1i(TextureID, 0);
+		//glUniform1i(1, 0);
+		
+		// Draw bottom face.
+		if (y != 0 && chunkData[x][y - 1][z] == BLOCK_AIR)
+		{
+			glBindTexture(GL_TEXTURE_2D, 1);
+			block::DrawFace(chunkData[x][y][z], x, y, z, 0, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);//0
+		}
+		// Draw top face.
+		if (y == CHUNK_HEIGHT - 1 || chunkData[x][y + 1][z] == BLOCK_AIR)
+		{
+			glBindTexture(GL_TEXTURE_2D, 2);
+			block::DrawFace(chunkData[x][y][z], x, y + 1, z, 0, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);//0
+		}
+		// Draw near face.
+		if (x != 0 && chunkData[x - 1][y][z] == BLOCK_AIR)
+		{
+			glBindTexture(GL_TEXTURE_2D, 1);
+			block::DrawFace(chunkData[x][y][z], x, y, z, 1, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);//1
+		}
+		// Draw far face.
+		if (x != CHUNK_WIDTH - 1 && chunkData[x + 1][y][z] == BLOCK_AIR)
+		{
+			glBindTexture(GL_TEXTURE_2D, 1);
+			block::DrawFace(chunkData[x][y][z], x + 1, y, z, 1, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);//1
+		}
+		// Draw right face.
+		if (z != CHUNK_WIDTH - 1 && chunkData[x][y][z + 1] == BLOCK_AIR)
+		{
+			glBindTexture(GL_TEXTURE_2D, 1);
+			block::DrawFace(chunkData[x][y][z], x, y, z, 2, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+		}
+		// Draw left face.
+		if (z != 0 && chunkData[x][y][z - 1] == BLOCK_AIR)
+		{
+			glBindTexture(GL_TEXTURE_2D, 1);
+			block::DrawFace(chunkData[x][y][z], x, y, z - 1, 2, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+		}
+	}
 
+	void DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+	{
 		for (int x = 0; x < CHUNK_WIDTH; x++)
 		{
 			for (int y = 0; y < CHUNK_HEIGHT; y++)
@@ -132,16 +175,10 @@ namespace chunk
 				{
 					if (chunkData[x][y][z] != BLOCK_AIR)
 					{
-						if (BlockIsExposeed(x, y, z))
-						{
-							glm::mat4 ModelMatrix = glm::mat4(1.0f);
-							ModelMatrix = glm::translate(ModelMatrix, glm::vec3(x, y, z));
-							ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.5f));
-							glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-							glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-							glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-							graphics::DrawFromBuffers(bc);
-						}
+						//if (BlockIsExposeed(x, y, z))
+						//{
+							DrawBlock(chunkData[x][y][z], x, y, z, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+						//}
 					}
 				}
 			}
