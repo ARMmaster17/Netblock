@@ -5,25 +5,28 @@
 
 #include "graphics.h"
 
-void DrawFromBuffers(GLuint& vertexbuffer, GLuint& uvbuffer, GLuint& normalbuffer, GLuint& elementbuffer, std::vector<unsigned short>& indices)
+namespace graphics
 {
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	void DrawFromBuffers(BufferCollection& bc)
+	{
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, bc.vertexbuffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	// 2nd attribute buffer : UVs
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		// 2nd attribute buffer : UVs
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, bc.uvbuffer);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	// 3rd attribute buffer : normals
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		// 3rd attribute buffer : normals
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, bc.normalbuffer);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	// Index buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+		// Index buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bc.elementbuffer);
 
-	// Draw the triangles !
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+		// Draw the triangles !
+		glDrawElements(GL_TRIANGLES, bc.indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+	}
 }

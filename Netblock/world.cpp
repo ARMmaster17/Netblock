@@ -5,17 +5,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 //#include "dynamicarray.h"
-#include "world.h"
+#include "graphics.h"
 #include "chunk.h"
 
+#include "world.h"
 
-
-void GenerateWorld()
+namespace world
 {
-	GenerateChunk();
-}
+	void GenerateWorld()
+	{
+		chunk::GenerateChunk();
+	}
 
-void DrawWorld(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, GLuint& vertexbuffer, GLuint& uvbuffer, GLuint& normalbuffer, GLuint& elementbuffer, std::vector<unsigned short>& indices)
-{
-	DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, vertexbuffer, uvbuffer, normalbuffer, elementbuffer, indices);
+	void DrawWorld(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+	{
+		chunk::DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+	}
 }

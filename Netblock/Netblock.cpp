@@ -23,6 +23,7 @@ using namespace glm;
 #include "texturehelpers.h"
 #include "modelhelpers.h"
 #include "vbo.h"
+#include "graphics.h"
 #include "world.h"
 
 int main()
@@ -31,7 +32,6 @@ int main()
 	if (!glfwInit())
 	{
 		fprintf(stderr, "Failed to initialize GLFW\n");
-		getchar();
 		return -1;
 	}
 
@@ -45,7 +45,6 @@ int main()
 	window = glfwCreateWindow(1024, 768, "NetBlock", NULL, NULL);
 	if (window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
-		getchar();
 		glfwTerminate();
 		return -1;
 	}
@@ -54,7 +53,6 @@ int main()
 	// Initialize GLEW
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
-		getchar();
 		glfwTerminate();
 		return -1;
 	}
@@ -91,31 +89,28 @@ int main()
 	std::vector< glm::vec3 > normals; // Won't be used at the moment.
 	bool res = loadOBJ("cube.obj", vertices, uvs, normals);
 
-	std::vector<unsigned short> indices;
+	graphics::BufferCollection bc;///////////////////////////////////////////////////////////////////////////////////
+
 	std::vector<glm::vec3> indexed_vertices;
 	std::vector<glm::vec2> indexed_uvs;
 	std::vector<glm::vec3> indexed_normals;
-	indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
+	indexVBO(vertices, uvs, normals, bc.indices, indexed_vertices, indexed_uvs, indexed_normals);
 
 	// Load it into a VBO
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glGenBuffers(1, &bc.vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, bc.vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size() * sizeof(glm::vec3), &indexed_vertices[0], GL_STATIC_DRAW);
-	GLuint uvbuffer;
-	glGenBuffers(1, &uvbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+	glGenBuffers(1, &bc.uvbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, bc.uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size() * sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
-	GLuint normalbuffer;
-	glGenBuffers(1, &normalbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glGenBuffers(1, &bc.normalbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, bc.normalbuffer);
 	glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
-	GLuint elementbuffer;
-	glGenBuffers(1, &elementbuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &bc.elementbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bc.elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bc.indices.size() * sizeof(unsigned short), &bc.indices[0], GL_STATIC_DRAW);
 
-	GenerateWorld();
+	world::GenerateWorld();
 
 	// For speed computation
 	double lastTime = glfwGetTime();
@@ -146,7 +141,7 @@ int main()
 		glUseProgram(programID);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This and ProgramID can be lifted if all objects use the same shader.
 
-		DrawWorld(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, vertexbuffer, uvbuffer, normalbuffer, elementbuffer, indices);
+		world::DrawWorld(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
@@ -161,8 +156,8 @@ int main()
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
 	// Cleanup VBO and shader
-	glDeleteBuffers(1, &vertexbuffer);
-	glDeleteBuffers(1, &uvbuffer);
+	glDeleteBuffers(1, &bc.vertexbuffer);
+	glDeleteBuffers(1, &bc.uvbuffer);
 	glDeleteProgram(programID);
 	glDeleteTextures(1, &Texture);
 	glDeleteVertexArrays(1, &VertexArrayID);
