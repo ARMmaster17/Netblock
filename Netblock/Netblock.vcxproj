@@ -140,23 +140,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="controls.cpp" />
     <ClCompile Include="dynamicarray.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="modelhelpers.cpp" />
     <ClCompile Include="Netblock.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="shaderhelpers.cpp" />
     <ClCompile Include="texturehelpers.cpp" />
     <ClCompile Include="vbo.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Character.h" />
     <ClInclude Include="chunk.h" />
     <ClInclude Include="controls.h" />
     <ClInclude Include="dynamicarray.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="modelhelpers.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="shaderhelpers.h" />
     <ClInclude Include="texturehelpers.h" />
     <ClInclude Include="vbo.h" />

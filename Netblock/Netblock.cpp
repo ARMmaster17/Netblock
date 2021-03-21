@@ -89,7 +89,7 @@ int main()
 	std::vector< glm::vec3 > normals; // Won't be used at the moment.
 	bool res = loadOBJ("cube.obj", vertices, uvs, normals);
 
-	graphics::BufferCollection bc;///////////////////////////////////////////////////////////////////////////////////
+	graphics::BufferCollection bc;
 
 	std::vector<glm::vec3> indexed_vertices;
 	std::vector<glm::vec2> indexed_uvs;
@@ -110,7 +110,10 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bc.elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bc.indices.size() * sizeof(unsigned short), &bc.indices[0], GL_STATIC_DRAW);
 
-	world::GenerateWorld();
+	World world;
+	world.ViewMatrixID = ViewMatrixID;
+
+	world.GenerateWorld();
 
 	// For speed computation
 	double lastTime = glfwGetTime();
@@ -131,17 +134,9 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glUseProgram(programID);
+		world.Update();
 
-		// Generate MVP maticies (will need to be replicated for each model rendered)
-		computeMatricesFromInputs();
-		glm::mat4 ProjectionMatrix = getProjectionMatrix();
-		// Camera matrix
-		glm::mat4 ViewMatrix = getViewMatrix();
-
-		glUseProgram(programID);
-		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This and ProgramID can be lifted if all objects use the same shader.
-
-		world::DrawWorld(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+		world.Draw(ModelMatrixID, MatrixID, bc);
 		
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

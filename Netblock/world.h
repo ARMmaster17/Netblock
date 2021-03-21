@@ -1,7 +1,18 @@
 #pragma once
 
-namespace world
+class Player;
+
+class World
 {
+public:
+	GLuint ViewMatrixID;
+	Player* player;
+
+	void InitCharacters();
 	void GenerateWorld();
-	void DrawWorld(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc);
-}
+	void Draw(GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc);
+	void Update();
+private:
+	glm::mat4 ProjectionMatrix;
+	glm::mat4 ViewMatrix;
+};

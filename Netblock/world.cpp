@@ -7,18 +7,34 @@
 //#include "dynamicarray.h"
 #include "graphics.h"
 #include "chunk.h"
+#include "Player.h"
 
 #include "world.h"
 
-namespace world
+void World::InitCharacters()
 {
-	void GenerateWorld()
-	{
-		chunk::GenerateChunk();
-	}
+	// Initialize player.
+	Player p;
+	//characterList.push_back(p);
+	this->player = &p;
+	// Initialize other characters as needed.
+}
 
-	void DrawWorld(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+void World::GenerateWorld()
+{
+	chunk::GenerateChunk();
+}
+
+void World::Update()
+{
+	/*for (Character c : characterList)
 	{
-		chunk::DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
-	}
+		c.Update();
+	}*/
+	player->UpdateCamera(this->ProjectionMatrix, this->ViewMatrix, this->ViewMatrixID);
+}
+
+void World::Draw(GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+{
+	chunk::DrawChunk(this->ProjectionMatrix, this->ViewMatrix, ModelMatrixID, MatrixID, bc);
 }
