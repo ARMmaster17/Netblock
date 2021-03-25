@@ -34,10 +34,10 @@ Player::~Player()
 {
 }
 
-void Player::Update(int world[chunk::CHUNK_WIDTH][chunk::CHUNK_HEIGHT][chunk::CHUNK_WIDTH])
+void Player::Update(chunk::Chunk* chunk)
 {
 	this->readControls();
-	this->resolvePosition(world);
+	this->resolvePosition(chunk);
 }
 
 void Player::readControls()
@@ -94,7 +94,7 @@ void Player::readControls()
 	
 }
 
-void Player::resolvePosition(int world[chunk::CHUNK_WIDTH][chunk::CHUNK_HEIGHT][chunk::CHUNK_WIDTH])
+void Player::resolvePosition(chunk::Chunk* chunk)
 {
 	// glfwGetTime is called only once, the first time this function is called
 	static double lastTime = glfwGetTime();

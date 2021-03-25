@@ -21,7 +21,8 @@ void World::InitCharacters()
 
 void World::GenerateWorld()
 {
-	chunk::GenerateChunk();
+	chunk = new chunk::Chunk();
+	chunk->GenerateChunk();
 	this->InitCharacters();
 }
 
@@ -31,11 +32,11 @@ void World::Update()
 	{
 		c.Update();
 	}*/
-	player->Update(chunk::chunkData);
+	player->Update(chunk);
 	player->UpdateCamera(this->ProjectionMatrix, this->ViewMatrix, this->ViewMatrixID);
 }
 
 void World::Draw(GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
 {
-	chunk::DrawChunk(this->ProjectionMatrix, this->ViewMatrix, ModelMatrixID, MatrixID, bc);
+	chunk->DrawChunk(this->ProjectionMatrix, this->ViewMatrix, ModelMatrixID, MatrixID, bc);
 }

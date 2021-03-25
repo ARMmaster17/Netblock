@@ -14,7 +14,7 @@ namespace chunk
 {
 	const int CHUNK_NOISE_VARIANCE_MAX = 2;
 
-	void GenerateChunk()
+	void Chunk::GenerateChunk()
 	{
 		/* Generate a new random seed from system time - do this once in your constructor */
 		srand(time(0));
@@ -79,7 +79,11 @@ namespace chunk
 		block::InitRotations();
 	}
 
-	bool BlockIsExposeed(int x, int y, int z)
+	Chunk::~Chunk()
+	{
+	}
+
+	bool Chunk::BlockIsExposeed(int x, int y, int z)
 	{
 		if (x - 1 < 0 || x + 1 > CHUNK_WIDTH - 1)
 		{
@@ -111,7 +115,7 @@ namespace chunk
 		return false;
 	}
 
-	void DrawBlock(int type, int x, int y, int z, glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+	void Chunk::DrawBlock(int type, int x, int y, int z, glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
 	{
 		//// Bind our texture in Texture Unit 0 (if changing textures)
 		//glActiveTexture(GL_TEXTURE0);
@@ -157,7 +161,22 @@ namespace chunk
 		}
 	}
 
-	void DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+	Chunk::Chunk()
+	{
+		this->chunkData = new int** [CHUNK_WIDTH];
+		for (int x = 0; x < CHUNK_WIDTH; ++x) {
+			this->chunkData[x] = new int* [CHUNK_HEIGHT];
+			for (int y = 0; y < CHUNK_HEIGHT; ++y) {
+				this->chunkData[x][y] = new int[CHUNK_WIDTH];
+				for (int z = 0; z < CHUNK_WIDTH; ++z) {
+					this->chunkData[x][y][z] = 0;
+				}
+			}
+		}
+
+	}
+
+	void Chunk::DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
 	{
 		for (int x = 0; x < CHUNK_WIDTH; x++)
 		{

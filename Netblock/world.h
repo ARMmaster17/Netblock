@@ -1,4 +1,5 @@
 #pragma once
+#include "chunk.h"
 
 class Player;
 
@@ -7,6 +8,7 @@ class World
 public:
 	GLuint ViewMatrixID;
 	Player* player;
+	chunk::Chunk* chunk;
 
 	void InitCharacters();
 	void GenerateWorld();
