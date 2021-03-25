@@ -12,15 +12,7 @@
 
 namespace chunk
 {
-	const int CHUNK_WIDTH = 32;
-	const int CHUNK_HEIGHT = 16;
-
 	const int CHUNK_NOISE_VARIANCE_MAX = 2;
-
-	int chunkData[CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_WIDTH];
-
-	const int BLOCK_AIR = 0;
-	const int BLOCK_DIRT = 1;
 
 	void GenerateChunk()
 	{

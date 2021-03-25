@@ -14,7 +14,13 @@ public:
 
 	Player();
 	~Player();
-	void Update();
+	void Update(int world[chunk::CHUNK_WIDTH][chunk::CHUNK_HEIGHT][chunk::CHUNK_WIDTH]);
 	void UpdateCamera(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ViewMatrixID);
+
+private:
+	glm::vec3 velocity;
+
+	void readControls();
+	void resolvePosition(int world[chunk::CHUNK_WIDTH][chunk::CHUNK_HEIGHT][chunk::CHUNK_WIDTH]);
 };
 

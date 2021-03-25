@@ -3,6 +3,7 @@
 extern GLFWwindow* window;
 #include <glm/glm.hpp>
 #include "controls.h"
+#include "chunk.h"
 #include "Player.h"
 
 const float mouseSpeed = 0.005f;
@@ -20,27 +21,27 @@ void Player::UpdateCamera(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GL
 
 Player::Player()
 {
-	this->position = glm::vec3(0, 0, 5);
+	this->position = glm::vec3(0, 0, 60);
 	// Initial horizontal angle : toward -Z
 	this->horizontalAngle = 3.14f;
 	// Initial vertical angle : none
 	this->verticalAngle = 0.0f;
 	this->speed = 3.0f; // 3 units / second
+	this->velocity = glm::vec3(0, 0, 0);
 }
 
 Player::~Player()
 {
 }
 
-void Player::Update()
+void Player::Update(int world[chunk::CHUNK_WIDTH][chunk::CHUNK_HEIGHT][chunk::CHUNK_WIDTH])
 {
-	// glfwGetTime is called only once, the first time this function is called
-	static double lastTime = glfwGetTime();
+	this->readControls();
+	this->resolvePosition(world);
+}
 
-	// Compute time difference between current and last frame
-	double currentTime = glfwGetTime();
-	float deltaTime = float(currentTime - lastTime);
-
+void Player::readControls()
+{
 	// Get mouse position
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
@@ -71,20 +72,50 @@ void Player::Update()
 
 	// Move forward
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		this->position += direction * deltaTime * speed;
+		//this->position += direction * deltaTime * speed;
+		this->velocity += direction * speed;
 	}
 	// Move backward
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		this->position -= direction * deltaTime * speed;
+		//this->position -= direction * deltaTime * speed;
+		this->velocity -= direction * speed;
 	}
 	// Strafe right
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		this->position += right * deltaTime * speed;
+		//this->position += right * deltaTime * speed;
+		this->velocity += right * speed;
 	}
 	// Strafe left
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		this->position -= right * deltaTime * speed;
+		//this->position -= right * deltaTime * speed;
+		this->velocity -= right * speed;
 	}
 
+	
+}
+
+void Player::resolvePosition(int world[chunk::CHUNK_WIDTH][chunk::CHUNK_HEIGHT][chunk::CHUNK_WIDTH])
+{
+	// glfwGetTime is called only once, the first time this function is called
+	static double lastTime = glfwGetTime();
+
+	// Compute time difference between current and last frame
+	double currentTime = glfwGetTime();
+	float deltaTime = float(currentTime - lastTime);
+
+	//velocity.y -= 9.81;
+	// TODO: Iterate throught the three velocity vectors.
+	float futureX = position.x + (velocity.x * deltaTime);
+	if (true /*check for collisions*/)
+	{
+		position.x += velocity.x * deltaTime;
+	}
+	position.y += velocity.y * deltaTime;
+	position.z += velocity.z * deltaTime;
+	// TODO: Check future position against objects in world. Only allow if no collisions will happen.
+
 	lastTime = currentTime;
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+	velocity.z = 0.0f;
 }

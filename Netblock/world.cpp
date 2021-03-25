@@ -31,7 +31,7 @@ void World::Update()
 	{
 		c.Update();
 	}*/
-	player->Update();
+	player->Update(chunk::chunkData);
 	player->UpdateCamera(this->ProjectionMatrix, this->ViewMatrix, this->ViewMatrixID);
 }
 
