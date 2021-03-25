@@ -4,4 +4,3 @@ class Character
 public:
 	void Update();
 };
-

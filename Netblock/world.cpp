@@ -14,15 +14,15 @@
 void World::InitCharacters()
 {
 	// Initialize player.
-	Player p;
 	//characterList.push_back(p);
-	this->player = &p;
+	player = new Player();
 	// Initialize other characters as needed.
 }
 
 void World::GenerateWorld()
 {
 	chunk::GenerateChunk();
+	this->InitCharacters();
 }
 
 void World::Update()
@@ -31,6 +31,7 @@ void World::Update()
 	{
 		c.Update();
 	}*/
+	player->Update();
 	player->UpdateCamera(this->ProjectionMatrix, this->ViewMatrix, this->ViewMatrixID);
 }
 
