@@ -67,7 +67,7 @@ namespace chunk
 					{
 						avgLevel = runningLevelSum / runningLevelCount;
 					}
-					int level = std::max(std::min((int)(noise * CHUNK_NOISE_VARIANCE_MAX) + avgLevel, CHUNK_HEIGHT), 0);
+					int level = std::max(std::min((int)(noise * CHUNK_NOISE_VARIANCE_MAX) + avgLevel, CHUNK_HEIGHT - 1), 0);
 					for (int y = 0; y <= level; y++)
 					{
 						chunkData[x][y][z] = BLOCK_DIRT;
@@ -127,37 +127,38 @@ namespace chunk
 		if (y != 0 && chunkData[x][y - 1][z] == BLOCK_AIR)
 		{
 			glBindTexture(GL_TEXTURE_2D, 1);
+			// TODO: Z offset might be broken.
 			block::DrawFace(chunkData[x][y][z], x, y, z, 0, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		}
 		// Draw top face.
 		if (y == CHUNK_HEIGHT - 1 || chunkData[x][y + 1][z] == BLOCK_AIR)
 		{
 			glBindTexture(GL_TEXTURE_2D, 2);
-			block::DrawFace(chunkData[x][y][z], x, y + 1, z, 0, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+			block::DrawFace(chunkData[x][y][z], x , y + 1, z + 1, 0, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		}
 		// Draw near face.
 		if (x != 0 && chunkData[x - 1][y][z] == BLOCK_AIR)
 		{
 			glBindTexture(GL_TEXTURE_2D, 1);
-			block::DrawFace(chunkData[x][y][z], x, y, z, 1, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+			block::DrawFace(chunkData[x][y][z], x, y, z + 1, 1, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		}
 		// Draw far face.
 		if (x != CHUNK_WIDTH - 1 && chunkData[x + 1][y][z] == BLOCK_AIR)
 		{
 			glBindTexture(GL_TEXTURE_2D, 1);
-			block::DrawFace(chunkData[x][y][z], x + 1, y, z, 1, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+			block::DrawFace(chunkData[x][y][z], x + 1, y, z + 1, 1, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		}
 		// Draw right face.
-		if (z != CHUNK_WIDTH - 1 && chunkData[x][y][z + 1] == BLOCK_AIR)
+		if (z != CHUNK_WIDTH - 1 && chunkData[x][y][z - 1] == BLOCK_AIR)
 		{
 			glBindTexture(GL_TEXTURE_2D, 1);
 			block::DrawFace(chunkData[x][y][z], x, y, z, 2, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		}
 		// Draw left face.
-		if (z != 0 && chunkData[x][y][z - 1] == BLOCK_AIR)
+		if (z != 0 && chunkData[x][y][z + 1] == BLOCK_AIR)
 		{
 			glBindTexture(GL_TEXTURE_2D, 1);
-			block::DrawFace(chunkData[x][y][z], x, y, z - 1, 2, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
+			block::DrawFace(chunkData[x][y][z], x, y, z + 1, 2, ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc);
 		}
 	}
 

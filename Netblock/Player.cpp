@@ -2,11 +2,17 @@
 #include <GLFW/glfw3.h>
 extern GLFWwindow* window;
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
+#include <stdio.h>
 #include "controls.h"
 #include "chunk.h"
 #include "Player.h"
 
 const float mouseSpeed = 0.005f;
+
+const float heightOffset = 2.0f;
 
 void Player::UpdateCamera(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ViewMatrixID)
 {
@@ -21,7 +27,7 @@ void Player::UpdateCamera(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GL
 
 Player::Player()
 {
-	this->position = glm::vec3(0, 0, 60);
+	this->position = glm::vec3(16, 15, 16);
 	// Initial horizontal angle : toward -Z
 	this->horizontalAngle = 3.14f;
 	// Initial vertical angle : none
@@ -103,16 +109,24 @@ void Player::resolvePosition(chunk::Chunk* chunk)
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
 
-	//velocity.y -= 9.81;
+	velocity.y -= 1.0f;
 	// TODO: Iterate throught the three velocity vectors.
 	float futureX = position.x + (velocity.x * deltaTime);
-	if (true /*check for collisions*/)
+	if (chunk->chunkData[(int)futureX][(int)(position.y - heightOffset)][(int)position.z] == chunk::BLOCK_AIR)
 	{
-		position.x += velocity.x * deltaTime;
+		position.x = futureX;
 	}
-	position.y += velocity.y * deltaTime;
-	position.z += velocity.z * deltaTime;
-	// TODO: Check future position against objects in world. Only allow if no collisions will happen.
+	float futureY = position.y + (velocity.y * deltaTime);
+	if (chunk->chunkData[(int)position.x][(int)(futureY - heightOffset)][(int)position.z] == chunk::BLOCK_AIR)
+	{
+		position.y = futureY;
+	}
+	float futureZ = position.z + (velocity.z * deltaTime);
+	if (chunk->chunkData[(int)position.x][(int)(position.y - heightOffset)][(int)futureZ] == chunk::BLOCK_AIR)
+	{
+		position.z = futureZ;
+	}
+	std::cout << glm::to_string(position) << " | " << glm::to_string(velocity) << std::endl;
 
 	lastTime = currentTime;
 	velocity.x = 0.0f;
