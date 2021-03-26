@@ -22,7 +22,7 @@ void World::InitCharacters()
 void World::GenerateWorld()
 {
 	chunk = new chunk::Chunk();
-	chunk->GenerateChunk();
+	chunk->GenerateChunk(0);
 	this->InitCharacters();
 }
 
@@ -38,5 +38,5 @@ void World::Update()
 
 void World::Draw(GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
 {
-	chunk->DrawChunk(this->ProjectionMatrix, this->ViewMatrix, ModelMatrixID, MatrixID, bc);
+	chunk->DrawChunk(this->ProjectionMatrix, this->ViewMatrix, ModelMatrixID, MatrixID, bc, 0);
 }

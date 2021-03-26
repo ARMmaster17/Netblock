@@ -12,12 +12,16 @@ namespace chunk
 	{
 	public:
 		int*** chunkData;
+		Chunk* xPosChunk;
+		Chunk* xNegChunk;
+		Chunk* zPosChunk;
+		Chunk* zNegChunk;
 
 		Chunk();
 		~Chunk();
 		void DrawBlock(int type, int x, int y, int z, glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc);
-		void GenerateChunk();
+		void GenerateChunk(int distFromPlayer);
 		bool BlockIsExposeed(int x, int y, int z);
-		void DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc);
+		void DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc, int distFromPlayer);
 	};
 }

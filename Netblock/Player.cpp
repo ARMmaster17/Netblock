@@ -118,7 +118,7 @@ void Player::readControls()
 
 void Player::resolveClickAction(chunk::Chunk* chunk)
 {
-	// TODO: Raw tracing in separate library, here, on in chunk.cpp
+	// TODO: Ray intersection testing in separate library, here, on in chunk.cpp
 }
 
 void Player::resolvePosition(chunk::Chunk* chunk)

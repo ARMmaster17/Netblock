@@ -13,9 +13,10 @@
 namespace chunk
 {
 	const int CHUNK_NOISE_VARIANCE_MAX = 2;
+	const int CHUNK_RENDER_DISTANCE = 3;
 
-	void Chunk::GenerateChunk()
-	{
+	void Chunk::GenerateChunk(int distFromPlayer)
+	{	
 		/* Generate a new random seed from system time - do this once in your constructor */
 		srand(time(0));
 
@@ -75,8 +76,26 @@ namespace chunk
 				}
 		}
 		
-		// TODO: Should probably move this.
 		block::InitRotations();
+		if (distFromPlayer < CHUNK_RENDER_DISTANCE)
+		{
+			if (xPosChunk == nullptr) {
+				xPosChunk = new Chunk();
+				xPosChunk->GenerateChunk(distFromPlayer + 1);
+			}
+			if (xNegChunk == nullptr) {
+				xNegChunk = new Chunk();
+				xNegChunk->GenerateChunk(distFromPlayer + 1);
+			}
+			if (zPosChunk == nullptr) {
+				xPosChunk = new Chunk();
+				xPosChunk->GenerateChunk(distFromPlayer + 1);
+			}
+			if (zNegChunk == nullptr) {
+				zNegChunk = new Chunk();
+				zNegChunk->GenerateChunk(distFromPlayer + 1);
+			}
+		}
 	}
 
 	Chunk::~Chunk()
@@ -177,8 +196,12 @@ namespace chunk
 
 	}
 
-	void Chunk::DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc)
+	void Chunk::DrawChunk(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc, int distFromPlayer)
 	{
+		if (distFromPlayer == CHUNK_RENDER_DISTANCE)
+		{
+			return;
+		}
 		for (int x = 0; x < CHUNK_WIDTH; x++)
 		{
 			for (int y = 0; y < CHUNK_HEIGHT; y++)
@@ -195,5 +218,12 @@ namespace chunk
 				}
 			}
 		}
+
+		// Render other chunks.
+		// TODO: Ensure that render is not cyclical (chunks will get repeated, except not right now because the original chunk does not link itself to the new chunk when generated.
+		if (xPosChunk != nullptr) xPosChunk->DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc, distFromPlayer + 1);
+		if (xNegChunk != nullptr) xNegChunk->DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc, distFromPlayer + 1);
+		if (zPosChunk != nullptr) zPosChunk->DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc, distFromPlayer + 1);
+		if (zNegChunk != nullptr) zNegChunk->DrawChunk(ProjectionMatrix, ViewMatrix, ModelMatrixID, MatrixID, bc, distFromPlayer + 1);
 	}
 }
