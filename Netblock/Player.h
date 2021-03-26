@@ -22,5 +22,6 @@ private:
 
 	void readControls();
 	void resolvePosition(chunk::Chunk* chunk);
+	void resolveClickAction(chunk::Chunk* chunk);
 };
 
