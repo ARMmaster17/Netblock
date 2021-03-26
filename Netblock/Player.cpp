@@ -11,8 +11,12 @@ extern GLFWwindow* window;
 #include "Player.h"
 
 const float mouseSpeed = 0.005f;
-
 const float heightOffset = 2.0f;
+const float deAcceleration = -0.3f;
+const float jumpPower = 34.0f;
+const float gravity = -2.0f;
+
+bool isJumping;
 
 void Player::UpdateCamera(glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ViewMatrixID)
 {
@@ -34,6 +38,7 @@ Player::Player()
 	this->verticalAngle = 0.0f;
 	this->speed = 3.0f; // 3 units / second
 	this->velocity = glm::vec3(0, 0, 0);
+	isJumping = false;
 }
 
 Player::~Player()
@@ -97,6 +102,15 @@ void Player::readControls()
 		this->velocity -= right * speed;
 	}
 
+	// Jump
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		isJumping = true;
+	}
+	else
+	{
+		isJumping = false;
+	}
+
 	
 }
 
@@ -109,8 +123,15 @@ void Player::resolvePosition(chunk::Chunk* chunk)
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
 
-	velocity.y -= 1.0f;
-	// TODO: Iterate throught the three velocity vectors.
+	velocity.y += gravity;
+
+	// Jump logic
+	if (isJumping && chunk->chunkData[(int)position.x][(int)(position.y - 0.1f - heightOffset)][(int)position.z] != chunk::BLOCK_AIR)
+	{
+		velocity.y += jumpPower;
+	}
+
+	
 	float futureX = position.x + (velocity.x * deltaTime);
 	if (chunk->chunkData[(int)futureX][(int)(position.y - heightOffset)][(int)position.z] == chunk::BLOCK_AIR)
 	{
@@ -126,10 +147,17 @@ void Player::resolvePosition(chunk::Chunk* chunk)
 	{
 		position.z = futureZ;
 	}
-	std::cout << glm::to_string(position) << " | " << glm::to_string(velocity) << std::endl;
 
 	lastTime = currentTime;
-	velocity.x = 0.0f;
-	velocity.y = 0.0f;
-	velocity.z = 0.0f;
+
+	// Deaccelerate
+	velocity.x *= 0.5f;
+	velocity.y *= 0.5f;
+	velocity.z *= 0.5f;
+	if (velocity.x < 0.1f && velocity.x > 0.0f) velocity.x = 0.0f;
+	if (velocity.x > -0.1f && velocity.x < 0.0f) velocity.x = 0.0f;
+	if (velocity.y < 0.1f && velocity.y > 0.0f) velocity.y = 0.0f;
+	if (velocity.y > -0.1f && velocity.y < 0.0f) velocity.y = 0.0f;
+	if (velocity.z < 0.1f && velocity.z > 0.0f) velocity.z = 0.0f;
+	if (velocity.z > -0.1f && velocity.z < 0.0f) velocity.z = 0.0f;
 }

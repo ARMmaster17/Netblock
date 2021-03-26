@@ -45,8 +45,6 @@ void computeMatricesFromInputs(glm::vec3 *position, float horizontalAngle, float
 	// Up vector
 	glm::vec3 up = glm::cross(right, direction);
 
-	// REMOVED: Take keyboard input
-
 	float FoV = initialFoV;
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
