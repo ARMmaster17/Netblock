@@ -16,8 +16,10 @@ namespace chunk
 		Chunk* xNegChunk;
 		Chunk* zPosChunk;
 		Chunk* zNegChunk;
+		int xOffset;
+		int yOffset;
 
-		Chunk();
+		Chunk(int drawXOffset, int drawYOffset);
 		~Chunk();
 		void DrawBlock(int type, int x, int y, int z, glm::mat4& ProjectionMatrix, glm::mat4& ViewMatrix, GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc);
 		void GenerateChunk(int distFromPlayer);

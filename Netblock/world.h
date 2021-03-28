@@ -6,14 +6,16 @@ class Player;
 class World
 {
 public:
+	const int DRAW_DISTANCE = 2;
+
 	GLuint ViewMatrixID;
 	Player* player;
-	chunk::Chunk* chunk;
+	chunk::Chunk** chunks;
 
-	void InitCharacters();
-	void GenerateWorld();
 	void Draw(GLuint& ModelMatrixID, GLuint& MatrixID, graphics::BufferCollection& bc);
 	void Update();
+	World();
+	~World();
 private:
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 ViewMatrix;
