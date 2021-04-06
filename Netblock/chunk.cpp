@@ -181,11 +181,8 @@ namespace chunk
 		}
 	}
 
-	Chunk::Chunk(int drawXOffset, int drawYOffset)
+	Chunk::Chunk()
 	{
-		this->xOffset;
-		this->yOffset;
-		
 		this->chunkData = new int** [CHUNK_WIDTH];
 		for (int x = 0; x < CHUNK_WIDTH; ++x) {
 			this->chunkData[x] = new int* [CHUNK_HEIGHT];
